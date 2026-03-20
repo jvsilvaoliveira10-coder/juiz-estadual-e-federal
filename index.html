@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Impede cache para garantir que sempre rode a detecção fresh -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Juiz Estadual vs Federal — FDF 2026</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{
+      background:#5C1010;
+      display:flex;align-items:center;justify-content:center;
+      min-height:100vh;font-family:sans-serif;color:#fff;
+      flex-direction:column;gap:1.5rem;padding:2rem;text-align:center;
+    }
+    .spinner{
+      width:44px;height:44px;
+      border:3px solid rgba(255,255,255,.2);
+      border-top-color:#C8922A;border-radius:50%;
+      animation:spin .8s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .msg{font-size:.9rem;opacity:.6;max-width:300px;line-height:1.6;}
+    .fallback{display:none;flex-direction:column;gap:.75rem;width:100%;max-width:280px;}
+    .fallback p{font-size:.8rem;opacity:.5;margin-bottom:.25rem;}
+    .fallback-btn{
+      display:block;width:100%;padding:1rem;border-radius:6px;
+      font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+      text-decoration:none;border:2px solid;cursor:pointer;transition:opacity .2s;
+    }
+    .fallback-btn:active{opacity:.8;}
+    .btn-mobile{background:#C8922A;color:#1a1a1a;border-color:#C8922A;}
+    .btn-desktop{background:transparent;color:#fff;border-color:rgba(255,255,255,.4);}
+  </style>
+</head>
+<body>
+  <div class="spinner" id="spinner"></div>
+  <p class="msg" id="msg">Detectando dispositivo...</p>
+  <div class="fallback" id="fallback">
+    <p>Escolha manualmente:</p>
+    <a class="fallback-btn btn-mobile" href="./juizes_fdf_mobile.html">📱 Versão Mobile</a>
+    <a class="fallback-btn btn-desktop" href="./juizes_fdf.html">🖥️ Versão Desktop</a>
+  </div>
+
+  <script>
+    function detectMobile() {
+      const ua = (navigator.userAgent || '').toLowerCase();
+
+      // Checar strings de user agent mobile
+      const mobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile|silk|kindle|mobi/i.test(ua);
+
+      // Checar toque
+      const hasTouch = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
+
+      // Checar largura da tela física (não do viewport)
+      const narrowScreen = window.screen.width < 1024;
+
+      // Checar se é iOS especificamente (iPhones com UA "desktop" no Safari)
+      const isIOS = /ipad|iphone|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      // Checar Android
+      const isAndroid = /android/i.test(ua);
+
+      return mobileUA || isIOS || isAndroid || (hasTouch && narrowScreen);
+    }
+
+    try {
+      const mobile = detectMobile();
+      const dest = mobile ? './juizes_fdf_mobile.html' : './juizes_fdf.html';
+
+      // Redireciona imediatamente
+      window.location.replace(dest);
+
+      // Se ainda estiver aqui depois de 2s, mostra botões manuais
+      setTimeout(() => {
+        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('msg').textContent = 'Redirecionamento lento? Escolha abaixo:';
+        document.getElementById('fallback').style.display = 'flex';
+      }, 2000);
+
+    } catch(e) {
+      // Se detectMobile falhar, mostra botões de escolha manual
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('msg').textContent = 'Escolha sua versão:';
+      document.getElementById('fallback').style.display = 'flex';
+    }
+  </script>
+</body>
+</html>
